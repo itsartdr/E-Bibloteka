@@ -65,6 +65,28 @@
         $stmt->bindParam(":age", $this->age);
         $stmt->bindParam(":gender", $this->gender);
 
+
+        try
+        {
+            $stmt->execute();
+            print_r("Succes already executed");
+            return true;
+        }
+        catch (PDOException $error)
+        {
+            $errorCode = (json_encode($error->errorInfo[1]));
+            if($errorCode == 1062)
+            {
+                http_response_code(400);
+                return print_r(['status' => 'false', 'message' => 'Email is already in use.']);
+            }
+            else
+            {
+                return print_r(['status' => 'false', 'message' => 'ERROR']);
+
+            }
+        }
+
         if ($stmt->execute())
         {
             return true;
